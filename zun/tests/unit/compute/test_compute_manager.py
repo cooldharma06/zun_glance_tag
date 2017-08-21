@@ -65,8 +65,8 @@ class TestManager(base.TestCase):
         self.compute_manager._do_container_create(self.context, container,
                                                   networks)
         mock_save.assert_called_with(self.context)
-        mock_pull.assert_any_call(self.context, container.image, 'latest',
-                                  'always', 'glance')
+        mock_pull.assert_any_call(self.context, container.image,
+                                  container.image_tag, 'always', 'glance')
         mock_create.assert_called_once_with(self.context, container, image,
                                             networks)
 
@@ -145,8 +145,8 @@ class TestManager(base.TestCase):
         self.compute_manager._do_container_run(self.context, container,
                                                networks)
         mock_save.assert_called_with(self.context)
-        mock_pull.assert_any_call(self.context, container.image, 'latest',
-                                  'always', 'glance')
+        mock_pull.assert_any_call(self.context, container.image,
+                                  container.image_tag, 'always', 'glance')
         mock_create.assert_called_once_with(self.context, container, image,
                                             networks)
         mock_start.assert_called_once_with(self.context, container)
@@ -157,7 +157,7 @@ class TestManager(base.TestCase):
     def test_container_run_image_not_found(self, mock_fail,
                                            mock_pull, mock_save):
         container_dict = utils.get_test_container(
-            image='test:latest', image_driver='docker',
+            image='test', image_driver='docker',
             image_pull_policy='ifnotpresent')
         container = Container(self.context, **container_dict)
         mock_pull.side_effect = exception.ImageNotFound(
@@ -169,7 +169,7 @@ class TestManager(base.TestCase):
         mock_save.assert_called_with(self.context)
         mock_fail.assert_called_with(self.context,
                                      container, 'Image Not Found')
-        mock_pull.assert_called_once_with(self.context, 'test', 'latest',
+        mock_pull.assert_called_once_with(self.context, 'test', ['latest'],
                                           'ifnotpresent', 'docker')
 
     @mock.patch.object(Container, 'save')
@@ -178,7 +178,7 @@ class TestManager(base.TestCase):
     def test_container_run_image_pull_exception_raised(self, mock_fail,
                                                        mock_pull, mock_save):
         container_dict = utils.get_test_container(
-            image='test:latest', image_driver='docker',
+            image='test', image_driver='docker',
             image_pull_policy='ifnotpresent')
         container = Container(self.context, **container_dict)
         mock_pull.side_effect = exception.ZunException(
@@ -190,7 +190,7 @@ class TestManager(base.TestCase):
         mock_save.assert_called_with(self.context)
         mock_fail.assert_called_with(self.context,
                                      container, 'Image Not Found')
-        mock_pull.assert_called_once_with(self.context, 'test', 'latest',
+        mock_pull.assert_called_once_with(self.context, 'test', ['latest'],
                                           'ifnotpresent', 'docker')
 
     @mock.patch.object(Container, 'save')
@@ -199,7 +199,7 @@ class TestManager(base.TestCase):
     def test_container_run_image_pull_docker_error(self, mock_fail,
                                                    mock_pull, mock_save):
         container_dict = utils.get_test_container(
-            image='test:latest', image_driver='docker',
+            image='test', image_driver='docker',
             image_pull_policy='ifnotpresent')
         container = Container(self.context, **container_dict)
         mock_pull.side_effect = exception.DockerError(
@@ -211,7 +211,7 @@ class TestManager(base.TestCase):
         mock_save.assert_called_with(self.context)
         mock_fail.assert_called_with(self.context,
                                      container, 'Docker Error occurred')
-        mock_pull.assert_called_once_with(self.context, 'test', 'latest',
+        mock_pull.assert_called_once_with(self.context, 'test', ['latest'],
                                           'ifnotpresent', 'docker')
 
     @mock.patch.object(Container, 'save')
@@ -223,7 +223,7 @@ class TestManager(base.TestCase):
                                                       mock_pull, mock_save):
         container = Container(self.context, **utils.get_test_container())
         image = {'image': 'repo', 'path': 'out_path', 'driver': 'glance',
-                 'repo': 'test', 'tag': 'testtag'}
+                 'repo': 'test', 'tag': ['testtag']}
         mock_pull.return_value = image, True
         mock_create.side_effect = exception.DockerError(
             message="Docker Error occurred")
@@ -235,7 +235,7 @@ class TestManager(base.TestCase):
         mock_save.assert_called_with(self.context)
         mock_fail.assert_called_with(
             self.context, container, 'Docker Error occurred', unset_host=True)
-        mock_pull.assert_any_call(self.context, container.image, 'latest',
+        mock_pull.assert_any_call(self.context, container.image, ['latest'],
                                   'always', 'glance')
         mock_create.assert_called_once_with(
             self.context, container, image, networks)

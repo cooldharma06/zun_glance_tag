@@ -51,7 +51,7 @@ def container_data(default_data=None, **kwargs):
     if default_data is None:
         default_data = {
             'name': data_utils.rand_name('container'),
-            'image': 'cirros:latest',
+            'image': 'cirros',
             'command': 'sleep 10000',
             'cpu': 0.1,
             'memory': '100',
@@ -63,6 +63,7 @@ def container_data(default_data=None, **kwargs):
             'workdir': '/',
             'interactive': False,
             'security_groups': ['default'],
+            'image_tag': ['latest'],
         }
 
     default_data.update(kwargs)

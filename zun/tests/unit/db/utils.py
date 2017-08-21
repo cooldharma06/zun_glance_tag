@@ -84,6 +84,7 @@ def get_test_container(**kwargs):
         'security_groups': kwargs.get('security_groups', ['default']),
         'auto_remove': kwargs.get('auto_remove', False),
         'runtime': kwargs.get('runtime', 'runc'),
+        'image_tag': kwargs.get('image_tag', ['latest']),
     }
 
 

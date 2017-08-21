@@ -162,6 +162,7 @@ class Container(Base):
     security_groups = Column(JSONEncodedList)
     auto_remove = Column(Boolean, default=False)
     runtime = Column(String(20))
+    image_tag = Column(JSONEncodedList)
 
 
 class VolumeMapping(Base):

@@ -35,13 +35,13 @@ class GlanceDriver(driver.ContainerImageDriver):
     def __init__(self):
         super(GlanceDriver, self).__init__()
 
-    def _search_image_on_host(self, context, repo):
-        LOG.debug('Searching for image %s locally', repo)
+    def _search_image_on_host(self, context, repo, tag):
+        LOG.debug('Searching for image %s:%s locally', repo, tag)
         images_directory = CONF.glance.images_directory
         try:
             # TODO(mkrai): Change this to search image entry in zun db
             #              after the image endpoint is merged.
-            image_meta = utils.find_image(context, repo)
+            image_meta = utils.find_image(context, repo, tag)
         except exception.ImageNotFound:
             return None
         if image_meta:
@@ -59,7 +59,7 @@ class GlanceDriver(driver.ContainerImageDriver):
         # TODO(shubhams): glance driver does not handle tags
         #              once metadata is stored in db then handle tags
         image_loaded = False
-        image = self._search_image_on_host(context, repo)
+        image = self._search_image_on_host(context, repo, tag)
         if image:
             image_path = image['path']
             image_checksum = image['checksum']
@@ -88,7 +88,7 @@ class GlanceDriver(driver.ContainerImageDriver):
 
         LOG.debug('Pulling image from glance %s', repo)
         try:
-            image_meta = utils.find_image(context, repo)
+            image_meta = utils.find_image(context, repo, tag)
             LOG.debug('Image %s was found in glance, downloading now...', repo)
             image_chunks = utils.download_image_in_chunks(context,
                                                           image_meta.id)

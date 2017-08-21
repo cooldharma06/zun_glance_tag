@@ -91,7 +91,7 @@ class Manager(periodic_task.PeriodicTasks):
     def _do_container_create_base(self, context, container, requested_networks,
                                   sandbox=None, limits=None, reraise=False):
         self._update_task_state(context, container, consts.IMAGE_PULLING)
-        repo, tag = utils.parse_image_name(container.image)
+        repo, tag = container.image, container.image_tag
         image_pull_policy = utils.get_image_pull_policy(
             container.image_pull_policy, tag)
         image_driver_name = container.image_driver
@@ -131,6 +131,8 @@ class Manager(periodic_task.PeriodicTasks):
             if image['driver'] == 'glance':
                 image['repo'], image['tag'] = self.driver.read_tar_image(
                     image)
+            else:
+                image['tag'] = utils.parse_tag_name(image['tag'])
             with rt.container_claim(context, container, container.host,
                                     limits):
                 container = self.driver.create(context, container, image,
@@ -644,11 +646,13 @@ class Manager(periodic_task.PeriodicTasks):
             raise
 
     @translate_exception
-    def image_search(self, context, image, image_driver_name, exact_match):
+    def image_search(self, context, image, image_driver_name,
+                     image_tag, exact_match):
         LOG.debug('Searching image...', image=image)
         try:
             return image_driver.search_image(context, image,
-                                             image_driver_name, exact_match)
+                                             image_driver_name,
+                                             image_tag, exact_match)
         except Exception as e:
             LOG.exception("Unexpected exception while searching image: %s",
                           six.text_type(e))

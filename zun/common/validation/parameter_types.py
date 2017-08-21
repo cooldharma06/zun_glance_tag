@@ -49,6 +49,10 @@ image_driver = {
     'enum': image_driver_list_with_none
 }
 
+image_tag = {
+    'type': ['array', 'null'],
+}
+
 container_name = {
     'type': ['string', 'null'],
     'minLength': 2,

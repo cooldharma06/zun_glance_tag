@@ -28,6 +28,7 @@ _container_properties = {
     'restart_policy': parameter_types.restart_policy,
     'interactive': parameter_types.boolean,
     'image_driver': parameter_types.image_driver,
+    'image_tag': parameter_types.image_tag,
     'security_groups': parameter_types.security_groups,
     'hints': parameter_types.hints,
     'nets': parameter_types.nets,

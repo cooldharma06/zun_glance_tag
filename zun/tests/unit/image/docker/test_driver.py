@@ -65,7 +65,7 @@ class TestDriver(base.BaseTestCase):
     def test_pull_image_success(self, mock_should_pull_image, mock_search):
         mock_should_pull_image.return_value = True
         mock_search.return_value = {'image': 'nginx', 'path': 'xyz'}
-        ret = self.driver.pull_image(None, 'test_image', 'latest', 'always')
+        ret = self.driver.pull_image(None, 'test_image', ['latest'], 'always')
         self.assertEqual(({'image': 'test_image', 'path': None}, True), ret)
         self.mock_docker.pull.assert_called_once_with(
             'test_image',
@@ -85,7 +85,7 @@ class TestDriver(base.BaseTestCase):
             self.mock_docker.pull = mock.Mock(
                 side_effect=errors.APIError('Error', '', ''))
             self.assertRaises(exception.ZunException, self.driver.pull_image,
-                              None, 'repo', 'tag', 'always')
+                              None, 'repo', ['tag'], 'always')
             self.mock_docker.pull.assert_called_once_with(
                 'repo',
                 tag='tag')
@@ -105,7 +105,7 @@ class TestDriver(base.BaseTestCase):
                                side_effect=exception.ImageNotFound('Error')
                                ) as mock_pull:
             self.assertRaises(exception.ImageNotFound, self.driver.pull_image,
-                              None, 'repo', 'tag', 'always')
+                              None, 'repo', ['tag'], 'always')
             self.mock_docker.pull.assert_called_once_with(
                 'repo',
                 tag='tag')
@@ -125,7 +125,7 @@ class TestDriver(base.BaseTestCase):
                                side_effect=exception.DockerError('Error')
                                ) as mock_pull:
             self.assertRaises(exception.DockerError, self.driver.pull_image,
-                              None, 'repo', 'tag', 'always')
+                              None, 'repo', ['tag'], 'always')
             self.mock_docker.pull.assert_called_once_with(
                 'repo',
                 tag='tag')
@@ -146,7 +146,7 @@ class TestDriver(base.BaseTestCase):
             self.mock_docker.pull = mock.Mock(
                 side_effect=TempException('Error'))
             self.assertRaises(exception.ZunException, self.driver.pull_image,
-                              None, 'repo', 'tag', 'always')
+                              None, 'repo', ['tag'], 'always')
             self.mock_docker.pull.assert_called_once_with(
                 'repo',
                 tag='tag')

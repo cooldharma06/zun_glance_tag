@@ -125,6 +125,12 @@ def parse_image_name(image):
     return image_repo, image_tag
 
 
+def parse_tag_name(tag):
+    if tag:
+        return tag[0]
+    return("latest")
+
+
 def spawn_n(func, *args, **kwargs):
     """Passthrough method for eventlet.spawn_n.
 
