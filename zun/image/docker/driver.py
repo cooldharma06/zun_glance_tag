@@ -54,6 +54,7 @@ class DockerDriver(driver.ContainerImageDriver):
 
     def pull_image(self, context, repo, tag, image_pull_policy):
         image_loaded = True
+        tag = utils.parse_tag_name(tag)
         image = self._search_image_on_host(repo, tag)
         if not utils.should_pull_image(image_pull_policy, bool(image)):
             if image:

@@ -285,7 +285,9 @@ class ContainersController(base.Controller):
         if CONF.api.enable_image_validation:
             images = compute_api.image_search(
                 context, container_dict['image'],
-                container_dict.get('image_driver'), True)
+                container_dict.get('image_driver'),
+                container_dict.get('image_tag'),
+                True)
             if not images:
                 raise exception.ImageNotFound(image=container_dict['image'])
         container_dict['project_id'] = context.project_id

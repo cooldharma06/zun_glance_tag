@@ -130,8 +130,9 @@ class API(object):
     def image_pull(self, context, image):
         return self.rpcapi.image_pull(context, image)
 
-    def image_search(self, context, image, image_driver, *args):
-        return self.rpcapi.image_search(context, image, image_driver, *args)
+    def image_search(self, context, image, image_driver, image_tag, *args):
+        return self.rpcapi.image_search(context, image, image_driver,
+                                        image_tag, *args)
 
     def capsule_create(self, context, new_capsule,
                        requested_networks=None, extra_spec=None):

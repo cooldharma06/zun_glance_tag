@@ -39,7 +39,8 @@ class Container(base.ZunPersistentObject, base.ZunObject):
     # Version 1.17: Add security_groups
     # Version 1.18: Add auto_remove
     # Version 1.19: Add runtime column
-    VERSION = '1.19'
+    # Version 1.20: Add image_tag
+    VERSION = '1.20'
 
     fields = {
         'id': fields.IntegerField(),
@@ -69,6 +70,7 @@ class Container(base.ZunPersistentObject, base.ZunObject):
         'status_detail': fields.StringField(nullable=True),
         'interactive': fields.BooleanField(nullable=True),
         'image_driver': fields.StringField(nullable=True),
+        'image_tag': fields.ListOfStringsField(nullable=True),
         'websocket_url': fields.StringField(nullable=True),
         'websocket_token': fields.StringField(nullable=True),
         'security_groups': fields.ListOfStringsField(nullable=True),

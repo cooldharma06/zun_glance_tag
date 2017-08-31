@@ -34,17 +34,31 @@ def create_glanceclient(context):
     return osc.glance()
 
 
-def find_image(context, image_ident):
+def find_image(context, image_ident, image_tag):
     matches = find_images(context, image_ident, exact_match=True)
     LOG.debug('Found matches %s ', matches)
-    if len(matches) == 0:
+
+    # added for glance image tag and name support
+    match = []
+    for i in range(len(matches)):
+        if matches[i]['tags']:
+            if len(image_tag) < len(matches[i]['tags']):
+                data1, data2 = image_tag, matches[i]['tags']
+            else:
+                data1, data2 = matches[i]['tags'], image_tag
+            if all(map(lambda x: x in data1, data2)):
+                match.append(matches[i])
+        else:
+            if matches[i]['tags'] == image_tag:
+                match.append(matches[i])
+    if len(match) == 0:
         raise exception.ImageNotFound(image=image_ident)
-    if len(matches) > 1:
+    if len(match) > 1:
         msg = ("Multiple images exist with same name "
                "%(image_ident)s. Please use the image id "
                "instead.") % {'image_ident': image_ident}
         raise exception.Conflict(msg)
-    return matches[0]
+    return match[0]
 
 
 def find_images(context, image_ident, exact_match):

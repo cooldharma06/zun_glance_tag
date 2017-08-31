@@ -38,6 +38,7 @@ _basic_keys = (
     'status_detail',
     'interactive',
     'image_driver',
+    'image_tag',
     'security_groups',
     'auto_remove',
     'runtime'
